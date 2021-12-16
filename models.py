@@ -4,7 +4,7 @@ from functions import connection_to_database
 class Db_query:
     def __init__(self, db):
         self.db = db
-
+    #Шаг 1
     def get_film(self, name):
         query = f"""
                             Select title, country, listed_in as genre,release_year, description
@@ -17,7 +17,7 @@ class Db_query:
             return data_dict
         else:
             return 'Нет фильма по данному запросу!'
-
+    #Шаг 2
     def get_year(self, year) -> list:
         titles = ['title', 'release_year']
         query = f"""
@@ -27,7 +27,7 @@ class Db_query:
         result = connection_to_database(query, self.db)
         data_dict = [dict(zip(titles, i)) for i in result]
         return data_dict
-
+    #Шаг 3
     def get_rating(self, rating):
         query = ''
         titles = ['title', 'rating', 'description']
@@ -52,7 +52,7 @@ class Db_query:
             return data_dict
         else:
             return "Нет фильма по данному запросу!"
-
+    #Шаг 4
     def top_genre(self, name) -> list:
         query = f"""
                             Select title, description
@@ -64,6 +64,9 @@ class Db_query:
         return data_dict
 
     # Rose McIver Ben Lamb
+    #Здесь нужно будет остановиться на ДЗ, и так как я сдаю до,
+    #Мне простительно) но по факту чтобы сделать группировку,
+    #Нужно разбить строку в SQL.
     def get_actors(self, first, second) -> list:
         query = f"""
                             Select "cast"
@@ -79,11 +82,12 @@ class Db_query:
                     dict_arr.append(jitem)
         data = []
         result = {i: dict_arr.count(i) for i in dict_arr if dict_arr.count(i) > 2}
+        #По желанию
         for k, v in result.items():
             data.append({'actor': k, 'count': v})
         return data
-
-    def picture(self, type_, year, genre) -> list:
+    #Шаг 6 тип картины (фильм или сериал), год выпуска и ее жанр
+    def get_picture(self, type_, year, genre) -> list:
         titles = ['title', 'description']
         query = f"""
                             Select title, description

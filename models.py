@@ -1,5 +1,5 @@
 from functions import connection_to_database
-
+import json
 
 class Db_query:
     def __init__(self, db):
@@ -11,26 +11,18 @@ class Db_query:
                             From netflix
                             where title='{name}' and type='Movie' ORDER BY release_year DESC"""
         result = connection_to_database(query, self.db)
-        if len(result) > 0:
-            titles = ['title', 'country', 'genre', 'release_year', 'description']
-            data_dict = dict(zip(titles, result[0]))
-            return data_dict
-        else:
-            return 'Нет фильма по данному запросу!'
+        return result
     #Шаг 2
     def get_year(self, year) -> list:
-        titles = ['title', 'release_year']
         query = f"""
                         Select title, release_year
                         From netflix
                         where type='Movie' and release_year <={year} ORDER BY release_year DESC LIMIT 100"""
         result = connection_to_database(query, self.db)
-        data_dict = [dict(zip(titles, i)) for i in result]
-        return data_dict
+        return result
     #Шаг 3
     def get_rating(self, rating):
         query = ''
-        titles = ['title', 'rating', 'description']
         if rating == 'children':
             query = f"""
                                     Select title, rating, description
@@ -47,11 +39,7 @@ class Db_query:
                                             From netflix
                                             where rating='R' or rating='NC-17'"""
         result = connection_to_database(query, self.db)
-        if len(result) > 0:
-            data_dict = [dict(zip(titles, i)) for i in result]
-            return data_dict
-        else:
-            return "Нет фильма по данному запросу!"
+        return result
     #Шаг 4
     def top_genre(self, name) -> list:
         query = f"""
@@ -59,9 +47,7 @@ class Db_query:
                             From netflix
                             where listed_in like'%{name}%' and type='Movie' ORDER BY release_year DESC Limit 10"""
         result = connection_to_database(query, self.db)
-        titles = ['title', 'description']
-        data_dict = [dict(zip(titles, i)) for i in result]
-        return data_dict
+        return result
 
     # Rose McIver Ben Lamb
     #Здесь нужно будет остановиться на ДЗ, и так как я сдаю до,
@@ -75,7 +61,7 @@ class Db_query:
         """
         result = connection_to_database(query, self.db)
         dict_arr = []
-        dict_lst = [item[0].split(', ') for item in result]
+        dict_lst = [item['cast'].split(', ') for item in result]
         for item in dict_lst:
             for jitem in item:
                 if jitem != first and jitem != second:
@@ -88,7 +74,6 @@ class Db_query:
         return data
     #Шаг 6 тип картины (фильм или сериал), год выпуска и ее жанр
     def get_picture(self, type_, year, genre) -> list:
-        titles = ['title', 'description']
         query = f"""
                             Select title, description
                             From netflix
@@ -97,5 +82,4 @@ class Db_query:
                             and listed_in like "%{genre}%"
         """
         result = connection_to_database(query, self.db)
-        data_dict = [dict(zip(titles, i)) for i in result]
-        return data_dict
+        return result

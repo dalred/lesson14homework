@@ -1,5 +1,4 @@
 from functions import connection_to_database
-import json
 
 class Db_query:
     def __init__(self, db):
